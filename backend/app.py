@@ -42,9 +42,6 @@ def index():
     data = cursor.fetchall()
     cursor.close()
 
-    sql = ('INSERT INTO {} (date, time, tag, power) VALUES '
-       '(%s, %s, %s, %s)'.format(self.db_scan_table))
-
     # Process data or render template
     return str(data)  # For demonstration purposes, returning fetched data as a string
 
