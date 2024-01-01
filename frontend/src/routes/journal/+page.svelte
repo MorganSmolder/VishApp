@@ -1,70 +1,127 @@
 <script lang="ts">
+    import Calender from "../../components/Calender.svelte";
+    import Modal from "../../components/Modal.svelte";
+    import StreakCounter from "../../components/StreakCounter.svelte";
+    import Query from "../../query";
+    import type * as QueryTypes from "../../query";
     import { onMount } from "svelte";
 
-    const backend_endpoint = "http://127.0.0.1:5000/tst";
-
-    let prevPost : HTMLButtonElement;
-    let nextPost : HTMLButtonElement;
+    let activeDate = new Date();
+    let entryZone: HTMLTextAreaElement;
+    let journalEntries: QueryTypes.IJournalEntries;
+    let loading = true;
 
     onMount(async () => {
-        var options = {
-            method: "GET", // *GET, POST, PUT, DELETE, etc.
-            mode: "no-cors", // no-cors, *cors, same-origin
-            cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-            credentials: "same-origin", // include, *same-origin, omit
-            headers: {
-            "Content-Type": "application/json",
-            // 'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            redirect: "follow", // manual, *follow, error
-            referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-        };
-        const data = await fetch(backend_endpoint, {
-            method: "GET", // *GET, POST, PUT, DELETE, etc.
-            mode: "no-cors", // no-cors, *cors, same-origin
-            cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-            credentials: "same-origin", // include, *same-origin, omit
-            headers: {
-            "Content-Type": "application/json",
-            // 'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            redirect: "follow", // manual, *follow, error
-            referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-        });
-        console.log(data);
+        ReadJournalEntriesForMonth();
     });
+
+    function ReadJournalEntriesForMonth() {
+        loading = true;
+        journalEntries = Query.GetJournalEntries(
+            activeDate.getFullYear(),
+            activeDate.getMonth(),
+        );
+
+        UpdateUiForActiveDate();
+        loading = false;
+    }
+
+    function UpdateUiForActiveDate() {
+        entryZone.value = "";
+
+        var entryToday = journalEntries.data[activeDate.getDate()];
+        if (entryToday && entryToday.textContent !== null) {
+            entryZone.value = entryToday.textContent;
+        }
+    }
+
+    function StoreEntry() {
+        if (loading) {
+            return;
+        }
+        journalEntries.data[activeDate.getDate()] = {
+            textContent: entryZone.value,
+        };
+        journalEntries.lastEntry = activeDate;
+        Query.WriteJournalEntries(
+            activeDate.getFullYear(),
+            activeDate.getMonth(),
+            journalEntries,
+        );
+    }
+
+    function HandleDateSelect(event: any) {
+        console.assert(!loading);
+        const newDate: Date = event.detail.date;
+
+        var oldDate = activeDate;
+        activeDate = newDate;
+        if (
+            newDate.getMonth() !== oldDate.getMonth() ||
+            newDate.getFullYear() !== oldDate.getFullYear()
+        ) {
+            ReadJournalEntriesForMonth();
+        } else {
+            UpdateUiForActiveDate();
+        }
+    }
 </script>
 
 <container>
     <column>
-        <h1>test</h1>
         <expand_row>
-            <button bind:this={prevPost} >&lt;</button>
-            <input type="date" value="2017-06-01" />
-            <button bind:this={nextPost} >&gt;</button>
+            <Calender
+                {journalEntries}
+                currentDate={activeDate}
+                on:dateselected={HandleDateSelect}
+            ></Calender>
+            <StreakCounter {journalEntries}></StreakCounter>
         </expand_row>
-        <textarea> </textarea>
+        <textarea bind:this={entryZone} on:input={StoreEntry}> </textarea>
     </column>
 </container>
+<Modal isVisible={false}>
+    <column>
+        <h1>How This Works</h1>
+        <row>
+            <column>
+                <h2>Log In Every Day</h2>
+            </column>
+            <column>
+                <h2>Write A Journal Entry</h2>
+            </column>
+            <column>
+                <h2>Keep Your Streak Going</h2>
+            </column>
+        </row>
+    </column>
+</Modal>
 
 <style>
-    @import "../shared.css";
+    @import "../../shared.css";
 
     textarea {
-        margin: 2rem;
         width: 100%;
+        margin: 2rem;
+        margin-top: 0;
         min-height: 500px;
         border: none;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
         padding: 25px;
         border-radius: 25px;
         resize: none;
-        font-size: 32px;
+        font-size: 22px;
+        line-height: 25px;
+        background: url($lib/images/line.png) repeat;
     }
 
     textarea:focus-visible {
         border: none;
         outline: none;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+        margin: 0;
     }
 </style>

@@ -1,13 +1,13 @@
 <script lang="ts">
-    import Icon from "$lib/images/meditate.png";    
+    import Icon from "$lib/images/meditate_c.png";
     import { onMount } from "svelte";
 
-    let getStarted : HTMLButtonElement;
+    let getStarted: HTMLButtonElement;
 
     onMount(async () => {
-        getStarted.onclick = () =>{
+        getStarted.onclick = () => {
             document.location.href = "./journal";
-        }
+        };
     });
 </script>
 
@@ -17,17 +17,15 @@
             <img src={Icon} alt="Logo of man meditating" />
             <column class="left">
                 <heading> MindSpace </heading>
-                <br />
                 <p>A minimal journalling experience</p>
-                <br />
-                <button bind:this={getStarted} >Get Started</button>
+                <button bind:this={getStarted}>Get Started</button>
             </column>
         </expand_row>
     </container>
 </hero>
 
 <style>
-    @import "./shared.css";
+    @import "../shared.css";
     hero {
         width: 100%;
         height: 500px;
@@ -45,6 +43,7 @@
 
         font-size: 64px;
         text-align: center;
+
     }
 
     p {
@@ -56,7 +55,7 @@
         min-width: 600px;
     }
 
-    button:hover{
+    button:hover {
         background-color: #ff3f8f;
     }
 </style>

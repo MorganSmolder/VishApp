@@ -16,7 +16,7 @@
 </div>
 
 <style>
-    @import "./shared.css";
+    @import "../shared.css";
 
     .card {
         width: 250PX;
