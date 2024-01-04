@@ -1,129 +1,74 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-
     import Hero from "../components/Hero.svelte";
     import Card from "../components/Card.svelte";
-    import Modal from "../components/Modal.svelte";
 
-    import Notebook from "$lib/images/notebook.png";
-    import Live from "$lib/images/live.png";
-    import Brain from "$lib/images/brain.png";
-    import Loop from "$lib/images/loop.png";
-
-    var viewSignUp: Boolean = true;
-    var needsSignIn: Boolean = false;
-
-    var usernameInput: HTMLInputElement;
-    var passwordInput: HTMLInputElement;
-
-    const backend_endpoint: string = `/api`;
-    const get_current_user: string = `${backend_endpoint}/getUser`;
-    const sign_in_user: string = `${backend_endpoint}/signIn`;
-    const sign_out_user: string = `${backend_endpoint}/signOut`;
-    const sign_up_user: string = `${backend_endpoint}/signUp`;
-
-    async function UpdateSignInStatus() {
-        return await (await fetch(get_current_user)).json().then((json) => {
-            needsSignIn = !json.isLoggedIn;
-        });
-    }
-
-    async function SignOut() {
-        await fetch(sign_out_user);
-        needsSignIn = true;
-    }
-
-    async function SignIn() {
-        return await fetch(sign_in_user, {
-            method: "POST",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                username: usernameInput.value,
-                password: passwordInput.value,
-            }),
-        }).then((json) => {
-            UpdateSignInStatus();
-        });
-    }
-
-    async function SignUp() {
-        return await fetch(sign_up_user, {
-            method: "POST",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                username: usernameInput.value,
-                password: passwordInput.value,
-            }),
-        }).then((json) => {
-            console.log(json)
-            UpdateSignInStatus();
-        });
-    }
-
-
-    function TabExisting() {
-        viewSignUp = false;
-    }
-
-    function TabNew() {
-        viewSignUp = true;
-    }
-
-    onMount(async () => {
-        await UpdateSignInStatus();
-    });
+    import SignInForm from "../components/SignInForm.svelte";
+    import LogOutButton from "../components/LogOutButton.svelte";
+    import Arrow from "../components/Arrow.svelte";
 </script>
-
 <Hero></Hero>
 <container>
-    <row style="width:1200px; margin:2rem auto;">
-        <Card description="hi" image={Live} tag="Live"></Card>
-        <Card description="hi" image={Notebook} tag="Journal"></Card>
-        <Card description="hi" image={Brain} tag="Reflect"></Card>
-        <Card description="hi" image={Loop} tag="Repeat"></Card>
+    <row class="" style="width:auto; margin:2rem; ">
+        <Card> 
+            <lord-icon
+                src="https://cdn.lordicon.com/dnojsmko.json"
+                trigger="hover">
+            </lord-icon>
+            <h3>Live</h3>
+            <p>Just do your normal everyday thing</p>
+        </Card>
+        <Arrow></Arrow>
+        <Card tag="Journal">
+            <lord-icon
+                src="https://cdn.lordicon.com/gwlusjdu.json"
+                trigger="hover">
+            </lord-icon>
+            <h3>Journal</h3>
+            <p>Log in every day to write a journal entry</p>
+        </Card>
+        <Arrow></Arrow>
+        <Card>
+            <lord-icon
+                src="https://cdn.lordicon.com/wznuqbba.json"
+                trigger="hover">
+            </lord-icon>
+            <h3>Reflect</h3>
+            <p>Read past entries to reflect on your journey</p>
+        </Card>
+        <Arrow></Arrow>
+        <Card>
+            <lord-icon
+                src="https://cdn.lordicon.com/gnjkudty.json"
+                trigger="hover" >
+            </lord-icon>
+            <h3>Repeat</h3>
+            <p>Keep the streak going as long as you can</p>
+        
+        </Card>
     </row>
-    <h2 style="margin:3rem;">We'll handle the technical stuff</h2>
-    {#if !needsSignIn}
-        <button on:click={SignOut}>Sign Out</button>
-    {/if}
+    <h2 style="margin:3rem;">Build a better you one day at a time!</h2>
+    
 </container>
-<Modal isVisible={needsSignIn}>
-    <row>
-        <button on:click={TabNew}>New User</button>
-        <button on:click={TabExisting}>Existing User</button>
-    </row>
-    {#if viewSignUp}
-        <column>
-            <h1>Sign Up</h1>
-            <input bind:this={usernameInput} type="text" />
-            <input bind:this={passwordInput} type="text" />
-            <button on:click={SignUp}>Sign In</button>
-        </column>
-    {:else}
-        <column>
-            <h1>Sign In</h1>
-            <input bind:this={usernameInput} type="text" />
-            <input bind:this={passwordInput} type="text" />
-            <button on:click={SignIn}>Sign In</button>
-        </column>
-    {/if}
-</Modal>
-
+<SignInForm></SignInForm>
 <style>
-    @import "../shared.css";
-
     h2 {
         text-align: center;
         font-size: 32px;
     }
 
-    button:hover {
-        background-color: #ff3f8f;
+    lord-icon{
+        width: 100px;
+        height: 100px;
+    }
+
+    @media only screen and (max-width: 1000px) {
+        .rounded_border{
+            border: none;
+        }
+
+        lord-icon{
+            width: 200px;
+            height: 200px;
+        }
     }
 </style>

@@ -1,57 +1,40 @@
 <script lang="ts">
     import Calender from "../../components/Calender.svelte";
+    import WeekView from "../../components/WeekView.svelte";
     import Modal from "../../components/Modal.svelte";
     import StreakCounter from "../../components/StreakCounter.svelte";
     import Query from "../../query";
-    import type * as QueryTypes from "../../query";
+    import Login from "../../login"
     import { onMount } from "svelte";
+    import GuestToUserConversionForm from "../../components/GuestToUserConversionForm.svelte";
 
     let activeDate = new Date();
     let entryZone: HTMLTextAreaElement;
-    let journalEntries: QueryTypes.IJournalEntries;
-    let loading = true;
+
+    let monthHasEntry : Boolean[];
 
     onMount(async () => {
-        ReadJournalEntriesForMonth();
+        await Login.UpdateSignInStatus();
+        await ReadJournalEntriesForMonth();
+        await GetActiveEntry();
+        
+        Query.StartTickingSync();
     });
 
-    function ReadJournalEntriesForMonth() {
-        loading = true;
-        journalEntries = Query.GetJournalEntries(
-            activeDate.getFullYear(),
-            activeDate.getMonth(),
-        );
-
-        UpdateUiForActiveDate();
-        loading = false;
+    async function ReadJournalEntriesForMonth() {
+        monthHasEntry = await Query.GlobalDataStore.GetEntriesForMonth(activeDate.getFullYear(), activeDate.getMonth());
     }
 
-    function UpdateUiForActiveDate() {
-        entryZone.value = "";
-
-        var entryToday = journalEntries.data[activeDate.getDate()];
-        if (entryToday && entryToday.textContent !== null) {
-            entryZone.value = entryToday.textContent;
-        }
+    async function GetActiveEntry(){
+        entryZone.value = await Query.GlobalDataStore.AccessEntry(activeDate);
     }
 
-    function StoreEntry() {
-        if (loading) {
-            return;
-        }
-        journalEntries.data[activeDate.getDate()] = {
-            textContent: entryZone.value,
-        };
-        journalEntries.lastEntry = activeDate;
-        Query.WriteJournalEntries(
-            activeDate.getFullYear(),
-            activeDate.getMonth(),
-            journalEntries,
-        );
+    async function StoreEntry() {
+        await Query.GlobalDataStore.UpdateEntry(activeDate, entryZone.value);
+        monthHasEntry[activeDate.getDate() - 1] = entryZone.value !== "";
     }
 
-    function HandleDateSelect(event: any) {
-        console.assert(!loading);
+    async function HandleDateSelect(event: any) {
         const newDate: Date = event.detail.date;
 
         var oldDate = activeDate;
@@ -60,23 +43,41 @@
             newDate.getMonth() !== oldDate.getMonth() ||
             newDate.getFullYear() !== oldDate.getFullYear()
         ) {
-            ReadJournalEntriesForMonth();
+            await ReadJournalEntriesForMonth();
+            await GetActiveEntry(); 
         } else {
-            UpdateUiForActiveDate();
+            await GetActiveEntry();
         }
     }
+
+    // async function BeforeUnload() {
+    //     console.log("HI");
+    //     // Cancel the event as stated by the standard.
+    //     event.preventDefault();
+    //     // Chrome requires returnValue to be set.
+    //     event.returnValue = "";
+
+    //     await Query.SyncData();
+
+    //     // more compatibility
+    //     return "...";
+    // }
 </script>
 
+<!-- <svelte:window on:beforeunload={BeforeUnload} /> -->
 <container>
     <column>
-        <expand_row>
+        <GuestToUserConversionForm></GuestToUserConversionForm>
+        <expand_row class="head">
+            <StreakCounter></StreakCounter>
+            <WeekView selectedDate={activeDate}></WeekView>
             <Calender
-                {journalEntries}
+                monthHasJournalEntry={monthHasEntry}
                 currentDate={activeDate}
                 on:dateselected={HandleDateSelect}
             ></Calender>
-            <StreakCounter {journalEntries}></StreakCounter>
         </expand_row>
+        <br />
         <textarea bind:this={entryZone} on:input={StoreEntry}> </textarea>
     </column>
 </container>
@@ -96,15 +97,21 @@
         </row>
     </column>
 </Modal>
-
 <style>
-    @import "../../shared.css";
+    .head {
+        /* background-color: white; */
+        /* var(--color-bg-1); */
+        /* border: 3px solid white; */
+        /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); */
+        margin-top: 20px;
+        /* border:4px solid var(--color-bg-2); */
+    }
 
     textarea {
         width: 100%;
         margin: 2rem;
         margin-top: 0;
-        min-height: 500px;
+        min-height: 400px;
         border: none;
         /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
         padding: 25px;
@@ -112,7 +119,11 @@
         resize: none;
         font-size: 22px;
         line-height: 25px;
-        background: url($lib/images/line.png) repeat;
+        /* background-color: var(--color-bg-1); */
+
+        background-color: white;
+        /* background: url($lib/images/line.png) repeat; */
+        border:2px solid #ddd;
     }
 
     textarea:focus-visible {
@@ -124,4 +135,10 @@
     h1 {
         margin: 0;
     }
+
+    column {
+        height: 100%;
+        row-gap: 0;
+    }
+
 </style>

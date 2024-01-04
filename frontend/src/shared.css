@@ -43,32 +43,46 @@ expand_row {
     color: var(--color-text);
 }
 
+.jumbo_button{
+    font-family: var(--font-body);
+    background-color: #ff65a5;
+    padding: 20px;
+    border-radius: 25px;
+    font-size: 24px;
+}
+
+.jumbo_button:hover{
+    background-color: rgb(254, 115, 173);
+}
+
 button
 {
     font-family: var(--font-body);
-    background-color: var(--color-theme-2);
-    padding: 20px;
-    border-radius: 15px;
-    border-radius: 25px;
+    /* background-color: var(--color-theme-2); */
+    background-color: #8798c4;
+    padding: 10px;
+    border-radius: 5px;
     border: none;
-    font-size: 24px;
+    font-size: 18px;
     color:white;
     cursor: pointer;
 }
     
 button:hover{
-    background-color: #ff3f8f;
+    background-color: rgb(78, 93, 137);
 }
 
 textarea {
     font-family: var(--font-body);
 }
 
-body {
-    min-height: 100vh;
+body, html{
+    width: 100%;
     margin: 0;
-    background-attachment: fixed;
-    background-color: var(--color-bg-1);
+    background-color: white;
+    /* min-height: 100vh; */
+    /* background-attachment: fixed; */
+    /* background-color: var(--color-bg-1);
     background-size: 100vw 100vh;
     background-image: radial-gradient(50% 50% at 50% 50%,
             rgba(255, 255, 255, 0.75) 0%,
@@ -76,5 +90,27 @@ body {
         linear-gradient(180deg,
             var(--color-bg-0) 0%,
             var(--color-bg-1) 15%,
-            var(--color-bg-2) 50%);
+            var(--color-bg-2) 50%); */
+}
+
+.rounded_border{
+    border-radius: 15px;
+    border-bottom: 5px solid #ddd;
+    border-left: 2px solid #ddd;
+    border-right: 2px solid #ddd;
+    border-top: 1px solid #ddd;
+}
+
+@media only screen and (max-width: 1000px) {
+    row{
+        flex-direction: column;
+    }
+
+    h3{
+        font-size: 32px;
+    }
+
+    p{
+        font-size: 24px;
+    }
 }

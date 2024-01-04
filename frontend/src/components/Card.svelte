@@ -1,27 +1,20 @@
 <script lang="ts">
-    export let description: string;
-    export let tag: string;
-    export let image: string;
 </script>
 
 <div class=" card">
     <column style="align-items:center">
-        <img
-            src={image}
-            alt="Avatar"
-            style="width:200px;height:200px;"
-        />
-        <h2>{tag}</h2>
+        <slot/>
     </column>
 </div>
 
 <style>
-    @import "../shared.css";
-
+    column{
+        row-gap: 0;
+    }
     .card {
-        width: 250PX;
-        height: 250PX;
         overflow: hidden;
         text-align: center;
+        flex:1;
     }
+
 </style>

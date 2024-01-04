@@ -1,18 +1,9 @@
-# create-svelte
+# What is this
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+Progressive web app that implements streak based daily journaling system
+    - Implemented with Svelte and Flask, all design and programming done by me
+    - Complies with modern web development best practices; responsive css, asyncronous client-server data transfer, offline usage supported through local storage
+    - Over 10,000 lifetime users
 
 ## Developing
 

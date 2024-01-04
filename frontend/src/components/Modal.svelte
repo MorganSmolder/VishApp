@@ -13,10 +13,7 @@
     </column>
 </modal_parent>
 {/if}
-
 <style>
-    @import "../shared.css";
-
     modal_parent {
         position: fixed;
         z-index: 1;
@@ -33,7 +30,8 @@
         background-color: white;
         display: block;
         width: 400px;
-        padding: 40px;
+        height: 300px;
+        overflow: hidden;
     }
 
     column {

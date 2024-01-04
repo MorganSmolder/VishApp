@@ -2,6 +2,8 @@
     import Icon from "$lib/images/meditate_c.png";
     import { onMount } from "svelte";
 
+    import Meditate from "./Meditate.svelte";
+
     let getStarted: HTMLButtonElement;
 
     onMount(async () => {
@@ -13,31 +15,33 @@
 
 <hero>
     <container>
-        <expand_row>
-            <img src={Icon} alt="Logo of man meditating" />
+        <row>
+            <Meditate ></Meditate>
             <column class="left">
                 <heading> MindSpace </heading>
-                <p>A minimal journalling experience</p>
-                <button bind:this={getStarted}>Get Started</button>
+                <p>A streak-driven journalling experience</p>
+                <button class="jumbo_button" bind:this={getStarted}>Get Started</button>
             </column>
-        </expand_row>
+        </row>
     </container>
 </hero>
 
 <style>
-    @import "../shared.css";
     hero {
         width: 100%;
-        height: 500px;
+        min-height: 400px;
         font-size: 36px;
         background-color: var(--color-bg-2);
         display: block;
+        padding-bottom: 20px;
+        text-align: center;
     }
 
     heading {
         color: white;
-        background-color: var(--color-theme-1);
-        padding: 40px;
+        background-color: #13132f;
+        /* var(--color-theme-1); */
+        padding: 20px;
         border-radius: 20px;
         font-weight: bold;
 
