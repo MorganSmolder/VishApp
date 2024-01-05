@@ -66,7 +66,7 @@
     }
 
     .tab:hover{
-        background-color: #fba2d0;
+        background-color: rgb(254, 115, 173);
         color: white;
     }
     
@@ -74,7 +74,7 @@
         box-shadow: 0 0 10px rgba(0,0,0,.2);    
         z-index: 1;
         /* color: white; */
-        background-color: #ff0069;
+        background-color: #ff65a5;
         color:white;
     }
 

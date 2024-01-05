@@ -1,16 +1,14 @@
 <script lang="ts">
-    import Icon from "$lib/images/meditate_c.png";
-    import { onMount } from "svelte";
+    import { createEventDispatcher } from "svelte";
 
     import Meditate from "./Meditate.svelte";
 
-    let getStarted: HTMLButtonElement;
+    const dispatch = createEventDispatcher();
 
-    onMount(async () => {
-        getStarted.onclick = () => {
-            document.location.href = "./journal";
-        };
-    });
+    function NotifyStart() {
+        dispatch("start", {});
+    }
+
 </script>
 
 <hero>
@@ -20,7 +18,7 @@
             <column class="left">
                 <heading> MindSpace </heading>
                 <p>A streak-driven journalling experience</p>
-                <button class="jumbo_button" bind:this={getStarted}>Get Started</button>
+                <button class="jumbo_button" on:click={NotifyStart}>Get Started</button>
             </column>
         </row>
     </container>

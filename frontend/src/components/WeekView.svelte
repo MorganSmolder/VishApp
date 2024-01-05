@@ -2,7 +2,7 @@
     import { createEventDispatcher } from "svelte";
 
     export let selectedDate: Date;
-    export let hasEntry : boolean[];
+    export let hasEntry: boolean[];
 
     const currentDate = new Date();
     const weekDays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
@@ -16,37 +16,41 @@
     }
 </script>
 
-<row>
-    {#each Array.from({length: 7}, (v, i) => {
-            let d = currentDate.getDay() - i;
-            if(d < 0){
-                d += 7
-            }
-            return {day:d, idx:6 - i};
-        }).reverse() as index}
+<row_fixed>
+    {#each Array.from({ length: 7 }, (v, i) => {
+        let d = currentDate.getDay() - i;
+        if (d < 0) {
+            d += 7;
+        }
+        return { day: d, idx: 6 - i };
+    }).reverse() as index}
         {@const classname =
-            index.day == currentDate.getDay()? "active_day" : ""}
-        {@const hasEntryForDay = hasEntry !== undefined && hasEntry[index.idx] }
-        <day class={classname} on:click={() => {
+            index.day == currentDate.getDay() ? "active_day" : ""}
+        {@const hasEntryForDay = hasEntry !== undefined && hasEntry[index.idx]}
+        <day
+            class={classname}
+            on:click={() => {
                 const date = new Date(currentDate.getTime());
                 date.setDate(date.getDate() + index.idx - 6);
                 NotifyDateSelected(date);
-            }}><column>
-            <span>{weekDays[index.day]}</span>
-            {#if index.day == currentDate.getDay()}
-                <span>Today</span>
-            {/if}
-            {#if hasEntryForDay}
-                <dot></dot>
-            {/if}
-        </column></day>
+            }}
+            ><column>
+                <span>{weekDays[index.day]}</span>
+                {#if index.day == currentDate.getDay()}
+                    <span>Today</span>
+                {/if}
+                {#if hasEntryForDay}
+                    <dot></dot>
+                {/if}
+            </column></day
+        >
     {/each}
-</row>
+</row_fixed>
 
 <style>
     day {
-        width: 80px;
-        height: 80px;
+        width: 60px;
+        height: 60px;
         text-align: center;
         font-size: 12px;
         border-radius: 5px;
@@ -65,9 +69,9 @@
     }
 
     .active_day {
-        background-color: #ff65a5;
+        /* background-color: #ff65a5;
         color: white;
-        border-bottom: 5px solid #9f5b78;
+        border-bottom: 5px solid #9f5b78; */
     }
 
     dot {
@@ -87,8 +91,22 @@
         pointer-events: none;
     }
 
+    row {
+        padding: 20px;
+    }
+
     column {
         height: 100%;
         row-gap: 0;
+    }
+    h2 {
+        margin: 0%;
+    }
+
+    @media only screen and (max-width: 1000px) {
+        day {
+            width: 40px;
+            height: 40px;
+        }
     }
 </style>

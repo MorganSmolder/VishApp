@@ -12,7 +12,7 @@
         return currentDate.getDate();
     }
 
-    var details = {
+    const details = {
         weekDays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
         months: [
             "January",
@@ -37,7 +37,7 @@
     }
 
     function NavigateRight() {
-        var targetDate =
+        const targetDate =
             currentDate.getMonth() === 11
                 ? new Date(currentDate.getFullYear() + 1, 0)
                 : new Date(
@@ -48,7 +48,7 @@
     }
 
     function NavigateLeft() {
-        var targetDate =
+        const targetDate =
             currentDate.getMonth() === 0
                 ? new Date(currentDate.getFullYear() - 1, 11)
                 : new Date(
@@ -59,7 +59,7 @@
     }
 
     function NavigateToDay(day: number) {
-        var targetDate = new Date(
+        const targetDate = new Date(
             currentDate.getFullYear(),
             currentDate.getMonth(),
             day,
@@ -68,13 +68,13 @@
     }
 
     function MonthDays(date: Date) {
-        var d = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        const d = new Date(date.getFullYear(), date.getMonth() + 1, 0);
         return d.getDate();
     }
 
     const today = new Date();
     function DayIsFuture(day: number) {
-        var test = new Date(
+        const test = new Date(
             currentDate.getFullYear(),
             currentDate.getMonth(),
             day,

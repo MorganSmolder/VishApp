@@ -5,8 +5,22 @@
     import SignInForm from "../components/SignInForm.svelte";
     import LogOutButton from "../components/LogOutButton.svelte";
     import Arrow from "../components/Arrow.svelte";
+
+    import { goto } from '$app/navigation';
+
+    let signInActive = false;
+
+    function HandleSignInSubmit(evt){
+        const loggedIn : boolean = evt.detail.loggedIn;
+
+        signInActive = false;
+        if(loggedIn)
+        {
+            goto("/journal");
+        }
+    }
 </script>
-<Hero></Hero>
+<Hero on:start={() => signInActive = true}></Hero>
 <container>
     <row class="" style="width:auto; margin:2rem; ">
         <Card> 
@@ -47,9 +61,9 @@
         </Card>
     </row>
     <h2 style="margin:3rem;">Build a better you one day at a time!</h2>
-    
 </container>
-<SignInForm></SignInForm>
+<SignInForm on:complete={HandleSignInSubmit} active={signInActive}></SignInForm>
+<LogOutButton></LogOutButton>
 <style>
     h2 {
         text-align: center;

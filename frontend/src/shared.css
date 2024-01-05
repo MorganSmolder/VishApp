@@ -20,6 +20,15 @@ row {
     row-gap: 2rem;
 }
 
+/* Does not react to window resize events */
+row_fixed {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    row-gap: 2rem;
+}
+
 expand_row {
     display: flex;
     flex-direction: row;

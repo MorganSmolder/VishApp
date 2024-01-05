@@ -1,12 +1,14 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+	import { fade } from 'svelte/transition';
+	import { scale } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
 
     export let isVisible : Boolean = false;
 </script>
 
 {#if isVisible}
-<modal_parent>
-    <column>
+<modal_parent transition:fade={{ delay: 0, duration: 300 }}>
+    <column transition:scale={{ duration: 300, delay: 0, opacity: 0.5, start: 0.5, easing: quintOut }}>
         <modal>
             <slot />
         </modal>

@@ -8,6 +8,8 @@
     import GuestToUserConversionForm from "../../components/GuestToUserConversionForm.svelte";
     import { onMount } from "svelte";
     import ConfirmModal from "../../components/ConfirmModal.svelte";
+    import TabView from "../../components/TabView.svelte";
+    import MenuItem from "../../components/MenuItem.svelte";
 
     let activeDate = new Date();
     let entryZone: HTMLTextAreaElement;
@@ -18,6 +20,8 @@
     let currentEntry = "";
     let showEditor = false;
     let showConfirm = false;
+    let wordCount = 0;
+    const minWordCount = 300;
 
     onMount(async () => {
         await Login.UpdateSignInStatus();
@@ -44,7 +48,7 @@
 
     async function GetEntriesForWeek() {
         let walk = activeDate;
-        for (var i = 6; i >= 0; i--) {
+        for (let i = 6; i >= 0; i--) {
             const entry = await Query.GlobalDataStore.AccessEntry(walk);
             weekHasEntries[i] = !StringIsNullOrWhiteSpace(entry.textContent);
             walk = GetDateDayBefore(walk);
@@ -52,7 +56,7 @@
     }
 
     function GetDateDayBefore(date: Date) {
-        var dayBefore = new Date(date.getTime());
+        let dayBefore = new Date(date.getTime());
         dayBefore.setDate(date.getDate() - 1);
         return dayBefore;
     }
@@ -80,7 +84,7 @@
         const newDate: Date = event.detail.date;
 
         console.log(newDate);
-        var oldDate = activeDate;
+        let oldDate = activeDate;
         activeDate = newDate;
         if (
             newDate.getMonth() !== oldDate.getMonth() ||
@@ -105,6 +109,41 @@
         haveEntryForCurrent = true;
     }
 
+    function FormatDate(date: Date) {
+        const months = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+        ];
+
+        const day = date.getDate();
+        const month = date.getMonth();
+        const monthName = months[month];
+        let suffix = "";
+
+        // Add the appropriate suffix for the day
+        if (day === 1 || day === 21 || day === 31) {
+            suffix = "st";
+        } else if (day === 2 || day === 22) {
+            suffix = "nd";
+        } else if (day === 3 || day === 23) {
+            suffix = "rd";
+        } else {
+            suffix = "th";
+        }
+
+        return `${monthName} the ${day}${suffix}`;
+    }
+
     // async function BeforeUnload() {
     //     console.log("HI");
     //     // Cancel the event as stated by the standard.
@@ -122,18 +161,54 @@
 <!-- <svelte:window on:beforeunload={BeforeUnload} /> -->
 <container>
     <column>
-        <GuestToUserConversionForm></GuestToUserConversionForm>
+        <!-- <GuestToUserConversionForm></GuestToUserConversionForm> -->
         <expand_row class="head">
-            <StreakCounter></StreakCounter>
-            <WeekView on:dateselected={HandleDateSelect} hasEntry={weekHasEntries} selectedDate={activeDate}
+            <WeekView
+                on:dateselected={HandleDateSelect}
+                hasEntry={weekHasEntries}
+                selectedDate={activeDate}
             ></WeekView>
-            <Calender
+            <row_fixed style="gap: 20px;">
+                <MenuItem title="Streak">
+                    <lord-icon
+                        src="https://cdn.lordicon.com/sbrtyqxj.json"
+                        trigger="hover"
+                        style="width:50px;height:50px"
+                    >
+                    </lord-icon>
+                </MenuItem>
+                <MenuItem title="History">
+                    <lord-icon
+                        src="https://cdn.lordicon.com/wmlleaaf.json"
+                        trigger="hover"
+                        style="width:50px;height:50px"
+                    >
+                    </lord-icon>
+                </MenuItem>
+                <MenuItem title="Account">
+                    <lord-icon
+                        src="https://cdn.lordicon.com/hrjifpbq.json"
+                        trigger="hover"
+                        style="width:50px;height:50px"
+                    >
+                    </lord-icon>
+                </MenuItem>
+                <!-- <StreakCounter></StreakCounter> -->
+            </row_fixed>
+            <!-- <Calender
                 monthHasJournalEntry={monthHasEntry}
                 currentDate={activeDate}
                 on:dateselected={HandleDateSelect}
-            ></Calender>
+            ></Calender> -->
         </expand_row>
-        <br />
+        <row
+            style="margin: 20px; justify-content:left; width:100%; gap:20px; align-items:baseline;"
+        >
+            <h1>{FormatDate(activeDate)}</h1>
+            <h3 style="margin: 0;">
+                Characters: {currentEntry.length}/{minWordCount}
+            </h3>
+        </row>
         {#if haveEntryForCurrent}
             <textarea style="pointer-events:none;">{currentEntry}</textarea>
         {:else if !showEditor}
@@ -146,14 +221,19 @@
             <p>No entry for today!</p>
             <button on:click={() => (showEditor = true)}>Create Entry</button>
         {:else}
-            <textarea bind:this={entryZone} placeholder="Today I..."></textarea>
+            <textarea
+                bind:this={entryZone}
+                on:input={() => (currentEntry = entryZone.value)}
+                placeholder="Today I..."
+            ></textarea>
             <button on:click={() => (showConfirm = true)}>Submit</button>
-            <ConfirmModal
-                active={showConfirm}
-                on:submit={CommitJournalEntry}
-                textContent="Are you sure you want to save? You cannot edit your entry again afterwards."
-            ></ConfirmModal>
         {/if}
+
+        <ConfirmModal
+            active={showConfirm}
+            on:submit={CommitJournalEntry}
+            textContent="Are you sure you want to save? You cannot edit your entry again afterwards."
+        ></ConfirmModal>
     </column>
 </container>
 <Modal isVisible={false}>
