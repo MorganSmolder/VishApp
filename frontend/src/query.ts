@@ -88,7 +88,7 @@ class DataStore
                     key:key,
                     textContent:entry.textContent,
                     lastSyncTime:entry.modifiedTime,
-                    modifiedTime:entry.modifiedTime
+                    modifiedTime:entry.modifiedTime,
                 };
                 this.loadedEntries[key] = newEntry;
                 this.AddKeyToIndex(key);
@@ -96,7 +96,7 @@ class DataStore
             }
         }
         
-        return (await this.AccessEntryRaw(key)).textContent;
+        return (await this.AccessEntryRaw(key));
     }
 
     public SetIndex(index : string[])
@@ -239,6 +239,11 @@ interface ICommitResult{
 }
 
 async function SyncData() {
+    if (!Login.AppLoginStatus.isLoggedIn)
+    {
+        return;
+    }
+
     const toSync : IJournalEntry[] = [];
 
     // Grab the items that need to be synced

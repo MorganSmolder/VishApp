@@ -87,7 +87,7 @@
     <anchor>
         {#if calenderVisible}
         <table class="calendarParent rounded_border">
-            <!-- <td>    
+            <td>    
                 <button on:click={NavigateLeft}>&lt;</button>
             </td>
             <td>
@@ -98,7 +98,7 @@
             </td>
             <td>
                 <button on:click={NavigateRight}>&gt;</button>
-            </td> -->
+            </td>
             {#each { length: 6 } as _, i}
                 {@const start = new Date(
                     currentDate.getFullYear(),

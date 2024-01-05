@@ -1,18 +1,43 @@
 <script lang="ts">
+    import { createEventDispatcher } from "svelte";
+
     export let selectedDate: Date;
+    export let hasEntry : boolean[];
 
     const currentDate = new Date();
     const weekDays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+
+    const dispatch = createEventDispatcher();
+
+    function NotifyDateSelected(targetDate: Date) {
+        dispatch("dateselected", {
+            date: targetDate,
+        });
+    }
 </script>
 
 <row>
-    {#each weekDays as day}
+    {#each Array.from({length: 7}, (v, i) => {
+            let d = currentDate.getDay() - i;
+            if(d < 0){
+                d += 7
+            }
+            return {day:d, idx:6 - i};
+        }).reverse() as index}
         {@const classname =
-            weekDays.indexOf(day) == currentDate.getDay() ? "active_day" : ""}
-        <day class={classname}><column>
-            <span>{day}</span>
-            {#if weekDays.indexOf(day) == currentDate.getDay()}
+            index.day == currentDate.getDay()? "active_day" : ""}
+        {@const hasEntryForDay = hasEntry !== undefined && hasEntry[index.idx] }
+        <day class={classname} on:click={() => {
+                const date = new Date(currentDate.getTime());
+                date.setDate(date.getDate() + index.idx - 6);
+                NotifyDateSelected(date);
+            }}><column>
+            <span>{weekDays[index.day]}</span>
+            {#if index.day == currentDate.getDay()}
                 <span>Today</span>
+            {/if}
+            {#if hasEntryForDay}
+                <dot></dot>
             {/if}
         </column></day>
     {/each}

@@ -18,7 +18,7 @@
             <p>Just do your normal everyday thing</p>
         </Card>
         <Arrow></Arrow>
-        <Card tag="Journal">
+        <Card>
             <lord-icon
                 src="https://cdn.lordicon.com/gwlusjdu.json"
                 trigger="hover">
