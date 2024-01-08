@@ -6,7 +6,7 @@
     export let currentDate: Date;
     export let monthHasJournalEntry: Boolean[];
 
-    let calenderVisible = true;
+    export let calenderVisible = true;
 
     function GetActiveDay() {
         return currentDate.getDate();
@@ -82,23 +82,19 @@
         return test > today;
     }
 </script>
-<div>
-    <button on:click={() => calenderVisible = !calenderVisible}>Journal History</button>
-    <anchor>
-        {#if calenderVisible}
-        <table class="calendarParent rounded_border">
-            <td>    
-                <button on:click={NavigateLeft}>&lt;</button>
-            </td>
-            <td>
-                <span>{details.months[currentDate.getMonth()]}</span>
-            </td>
-            <td>
-                <span>{currentDate.getFullYear().toString()}</span>
-            </td>
-            <td>
-                <button on:click={NavigateRight}>&gt;</button>
-            </td>
+<anchor>
+    {#if calenderVisible}
+    <!-- we are just stopping clicks here, don't need to worry about ally -->
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <column on:click={e => e.stopPropagation()} class="parent rounded_border"  style="padding: 20px;">
+        <expand_row>
+            <button on:click={NavigateLeft}>&lt;</button>
+            <span>{details.months[currentDate.getMonth()]}</span>
+            <!-- <span>{currentDate.getFullYear().toString()}</span> -->
+            <button on:click={NavigateRight}>&gt;</button>
+        </expand_row>
+        <table>
             {#each { length: 6 } as _, i}
                 {@const start = new Date(
                     currentDate.getFullYear(),
@@ -133,9 +129,9 @@
                 </tr>
             {/each}
         </table>
-        {/if}
-    </anchor>
-</div>
+    </column>
+    {/if}
+</anchor>
 <style>
     .fa {
         font-size: 0.5em;
@@ -183,7 +179,7 @@
     table{
         padding: 5px;
     }
-
+/* 
     anchor{
         display: block;
         position: relative;
@@ -194,5 +190,5 @@
         top: 0;
         left: 0;
         background-color: white;
-    }
+    } */
 </style>

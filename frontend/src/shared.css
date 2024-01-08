@@ -52,7 +52,7 @@ expand_row {
     color: var(--color-text);
 }
 
-.jumbo_button{
+.jumbo_button {
     font-family: var(--font-body);
     background-color: #ff65a5;
     padding: 20px;
@@ -60,12 +60,11 @@ expand_row {
     font-size: 24px;
 }
 
-.jumbo_button:hover{
+.jumbo_button:hover {
     background-color: rgb(254, 115, 173);
 }
 
-button
-{
+button {
     font-family: var(--font-body);
     /* background-color: var(--color-theme-2); */
     background-color: #8798c4;
@@ -73,11 +72,11 @@ button
     border-radius: 5px;
     border: none;
     font-size: 18px;
-    color:white;
+    color: white;
     cursor: pointer;
 }
-    
-button:hover{
+
+button:hover {
     background-color: rgb(78, 93, 137);
 }
 
@@ -85,7 +84,8 @@ textarea {
     font-family: var(--font-body);
 }
 
-body, html{
+body,
+html {
     width: 100%;
     margin: 0;
     background-color: white;
@@ -102,7 +102,7 @@ body, html{
             var(--color-bg-2) 50%); */
 }
 
-.rounded_border{
+.rounded_border {
     border-radius: 15px;
     border-bottom: 5px solid #ddd;
     border-left: 2px solid #ddd;
@@ -110,16 +110,30 @@ body, html{
     border-top: 1px solid #ddd;
 }
 
+anchor {
+    display: block;
+    position: relative;
+}
+
+.parent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: white;
+    z-index: 1;
+    transform: translate(-50%, 0);
+}
+
 @media only screen and (max-width: 1000px) {
-    row{
+    row {
         flex-direction: column;
     }
 
-    h3{
+    h3 {
         font-size: 32px;
     }
 
-    p{
+    p {
         font-size: 24px;
     }
 }

@@ -3,7 +3,6 @@
     import Card from "../components/Card.svelte";
 
     import SignInForm from "../components/SignInForm.svelte";
-    import LogOutButton from "../components/LogOutButton.svelte";
     import Arrow from "../components/Arrow.svelte";
 
     import { goto } from '$app/navigation';
@@ -63,7 +62,6 @@
     <h2 style="margin:3rem;">Build a better you one day at a time!</h2>
 </container>
 <SignInForm on:complete={HandleSignInSubmit} active={signInActive}></SignInForm>
-<LogOutButton></LogOutButton>
 <style>
     h2 {
         text-align: center;

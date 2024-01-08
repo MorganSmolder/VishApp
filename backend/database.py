@@ -1,18 +1,11 @@
-from sqlalchemy import create_engine, MetaData
+from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import Column, Integer, String, Date, Text, ForeignKey, BigInteger
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-import time
-
-engine = create_engine('mysql://root:password@localhost:3306/JournalAppDb')
-metadata = MetaData()
-db_session = scoped_session(sessionmaker(autocommit=False,
-                                         autoflush=False,
-                                         bind=engine))
 
 Base = declarative_base()
-Base.query = db_session.query_property()
+engine = None
 
 class User(Base):
     __tablename__ = 'User'
@@ -32,31 +25,19 @@ class JournalEntry(Base):
 
     user = relationship("User")
 
-Base.metadata.create_all(engine)
+def setup_session(connection_string):
+    global engine 
+    engine = create_engine(connection_string)
+    db_session = scoped_session(sessionmaker(autocommit=False,
+                                            autoflush=False,
+                                            bind=engine))
 
-def add_user(username, password):
-    epoch_time = int(time.time())
-    new_user = User(Name=username, Password=password,JoinPoint=epoch_time)
-    db_session.add(new_user)
-    db_session.commit()
-    return True
+    Base.query = db_session.query_property()
 
-def get_user_id(username, password):
-    user = db_session.query(User).filter_by(Name=username,Password=password).first()
-    return user.Id
+    return db_session
 
-def user_exists(username):
-    user = db_session.query(User).filter_by(Name=username).first()
-    return user is not None
+def create_all():
+    Base.metadata.create_all(engine)
 
-def user_with_password_exists(username, password):
-    user = db_session.query(User).filter_by(Name=username, Password=password).first()
-    return user is not None
-
-def get_journal_entry(year, month, day, user_id):
-    entry = db_session.query(JournalEntry).filter_by(Year=year,Month=month,Day=day,UserId=user_id).first()
-    return entry
-
-def add_journal_entry(new_entry):
-    db_session.add(new_entry)
-    db_session.commit()
+def drop_all():
+    Base.metadata.drop_all(bind=engine)

@@ -13,7 +13,6 @@ interface IUserInfoResponse {
 
 type LoginStatusChangeCallback = (a: LoginStatus) => void;
 const IsGuestKey = "IsGuest";
-const GuestTokenKey = "GuestToken";
 class LoginStatus {
     isLoggedIn: boolean;
     userId: string;
@@ -25,26 +24,22 @@ class LoginStatus {
         this.userId = ""
     }
 
+    GetGuestKey(){
+        return "GUEST";
+    }
+
     GetIdentifier() {
         return this.IsGuest()
-            ? localStorage.getItem(GuestTokenKey)
+            ? this.GetGuestKey()
             : this.userId;
     }
 
     DestroyGuest(){
         localStorage.setItem(IsGuestKey, JSON.stringify(false));
-        localStorage.removeItem(GuestTokenKey);
     }
 
     SetIsGuest(isGuest: boolean) {
         localStorage.setItem(IsGuestKey, JSON.stringify(isGuest));
-
-        // We want to keep the same guest token between login/sign off attempts.
-        // This lets someone sign in an existing account without clearing the
-        // guest data
-        if (isGuest && localStorage.getItem(GuestTokenKey) === null) {
-            localStorage.setItem(GuestTokenKey, crypto.randomUUID().replace("-", ""))
-        }
     }
 
     IsGuest() {

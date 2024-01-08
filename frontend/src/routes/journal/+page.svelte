@@ -10,9 +10,12 @@
     import ConfirmModal from "../../components/ConfirmModal.svelte";
     import TabView from "../../components/TabView.svelte";
     import MenuItem from "../../components/MenuItem.svelte";
+    import AccountManagement from "../../components/AccountManagement.svelte";
 
     let activeDate = new Date();
     let entryZone: HTMLTextAreaElement;
+
+    let calenderVisible: boolean = false;
 
     let monthHasEntry: boolean[];
     let weekHasEntries: boolean[] = Array.from({ length: 7 }, () => false);
@@ -23,14 +26,21 @@
     let wordCount = 0;
     const minWordCount = 300;
 
+    let streak = 0;
+
     onMount(async () => {
         await Login.UpdateSignInStatus();
         await ReadJournalEntriesForMonth();
         await GetActiveEntry();
         await GetEntriesForWeek();
+        await GetStreak();
 
         Query.StartTickingSync();
     });
+
+    async function GetStreak() {
+        streak = await Query.GlobalDataStore.GetStreak(new Date());
+    }
 
     async function ReadJournalEntriesForMonth() {
         monthHasEntry = await Query.GlobalDataStore.GetEntriesForMonth(
@@ -156,6 +166,26 @@
     //     // more compatibility
     //     return "...";
     // }
+
+    function DateIsPast(date: Date) {
+        const present = new Date();
+
+        return (
+            date.getFullYear() < present.getFullYear() ||
+            date.getMonth() < present.getMonth() ||
+            date.getDate() < present.getDate()
+        );
+    }
+
+    function DateIsFuture(date: Date) {
+        const present = new Date();
+
+        return (
+            date.getFullYear() > present.getFullYear() ||
+            date.getMonth() > present.getMonth() ||
+            date.getDate() > present.getDate()
+        );
+    }
 </script>
 
 <!-- <svelte:window on:beforeunload={BeforeUnload} /> -->
@@ -163,63 +193,104 @@
     <column>
         <!-- <GuestToUserConversionForm></GuestToUserConversionForm> -->
         <expand_row class="head">
-            <WeekView
+            <!-- <WeekView
                 on:dateselected={HandleDateSelect}
                 hasEntry={weekHasEntries}
                 selectedDate={activeDate}
-            ></WeekView>
+            ></WeekView> -->
             <row_fixed style="gap: 20px;">
                 <MenuItem title="Streak">
                     <lord-icon
+                        slot="icon"
                         src="https://cdn.lordicon.com/sbrtyqxj.json"
                         trigger="hover"
                         style="width:50px;height:50px"
                     >
                     </lord-icon>
+                    <span slot="visible_content">
+                        {streak}
+                    </span>
                 </MenuItem>
-                <MenuItem title="History">
+                <MenuItem
+                    on:click={() => (calenderVisible = !calenderVisible)}
+                    title="History"
+                >
                     <lord-icon
+                        slot="icon"
                         src="https://cdn.lordicon.com/wmlleaaf.json"
                         trigger="hover"
                         style="width:50px;height:50px"
                     >
                     </lord-icon>
+                    <div slot="content">
+                        <Calender
+                            calenderVisible={true}
+                            monthHasJournalEntry={monthHasEntry}
+                            currentDate={activeDate}
+                            on:dateselected={HandleDateSelect}
+                        ></Calender>
+                    </div>
                 </MenuItem>
                 <MenuItem title="Account">
                     <lord-icon
+                        slot="icon"
                         src="https://cdn.lordicon.com/hrjifpbq.json"
                         trigger="hover"
                         style="width:50px;height:50px"
                     >
                     </lord-icon>
+                    <div slot="content">
+                        <AccountManagement></AccountManagement>
+                    </div>
                 </MenuItem>
                 <!-- <StreakCounter></StreakCounter> -->
             </row_fixed>
-            <!-- <Calender
-                monthHasJournalEntry={monthHasEntry}
-                currentDate={activeDate}
-                on:dateselected={HandleDateSelect}
-            ></Calender> -->
         </expand_row>
-        <row
-            style="margin: 20px; justify-content:left; width:100%; gap:20px; align-items:baseline;"
-        >
-            <h1>{FormatDate(activeDate)}</h1>
-            <h3 style="margin: 0;">
-                Characters: {currentEntry.length}/{minWordCount}
-            </h3>
+        <row style="margin: 20px; width:100%; gap:20px; align-items:baseline;">
+            <column>
+                <h1>{FormatDate(activeDate)}</h1>
+                <h3 style="margin: 0;">
+                    Characters: {currentEntry.length}/{minWordCount}
+                </h3>
+            </column>
         </row>
         {#if haveEntryForCurrent}
             <textarea style="pointer-events:none;">{currentEntry}</textarea>
         {:else if !showEditor}
-            <lord-icon
-                src="https://cdn.lordicon.com/rnqhxxtn.json"
-                trigger="hover"
-                style="width:250px;height:250px"
-            >
-            </lord-icon>
-            <p>No entry for today!</p>
-            <button on:click={() => (showEditor = true)}>Create Entry</button>
+            {#if DateIsPast(activeDate)}
+                <lord-icon
+                    src="https://cdn.lordicon.com/uhstaxbs.json"
+                    trigger="hover"
+                    style="width:250px;height:250px"
+                >
+                </lord-icon>
+                <p>
+                    Wow, we're in the past! You didn't write a journal entry on
+                    this day.
+                </p>
+            {:else if DateIsFuture(activeDate)}
+                <lord-icon
+                    src="https://cdn.lordicon.com/pcxpjqjz.json"
+                    trigger="hover"
+                    style="width:250px;height:250px"
+                >
+                </lord-icon>
+                <p>
+                    Neato, it's the future! You better write a journal entry
+                    when this date comes around!
+                </p>
+            {:else}
+                <lord-icon
+                    src="https://cdn.lordicon.com/rnqhxxtn.json"
+                    trigger="hover"
+                    style="width:250px;height:250px"
+                >
+                </lord-icon>
+                <p>No entry for today!</p>
+                <button on:click={() => (showEditor = true)}
+                    >Create Entry</button
+                >
+            {/if}
         {:else}
             <textarea
                 bind:this={entryZone}
@@ -261,6 +332,7 @@
         /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); */
         margin-top: 20px;
         /* border:4px solid var(--color-bg-2); */
+        justify-content: center;
     }
 
     textarea {
@@ -295,6 +367,6 @@
 
     column {
         height: 100%;
-        row-gap: 0;
+        row-gap: 10px;
     }
 </style>

@@ -1,5 +1,6 @@
 <script lang="ts">
     import Login from "../login";
+    import { goto } from '$app/navigation';
 
     let isLoggedIn = false;
 
@@ -7,6 +8,10 @@
         isLoggedIn = status.IsGuestOrUser();
     });
 </script>
-{#if isLoggedIn}
-    <button on:click={() => Login.SignOut()}>Sign Out</button>
-{/if}
+
+<button
+    on:click={async () => {
+        await Login.SignOut();
+        goto("/");
+    }}>Sign Out</button
+>
