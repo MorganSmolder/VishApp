@@ -1,6 +1,5 @@
 <script lang="ts">
     import Calender from "../../components/Calender.svelte";
-    import WeekView from "../../components/WeekView.svelte";
     import Modal from "../../components/Modal.svelte";
     import StreakCounter from "../../components/StreakCounter.svelte";
     import Query from "../../query";
@@ -11,6 +10,11 @@
     import TabView from "../../components/TabView.svelte";
     import MenuItem from "../../components/MenuItem.svelte";
     import AccountManagement from "../../components/AccountManagement.svelte";
+    import Lottie from "../../components/Lottie.svelte";
+
+    import Dino from "$lib/lottie/dino.json";
+    import Ufo from "$lib/lottie/ufo.json";
+    import Clock from "$lib/lottie/clock.json";
 
     let activeDate = new Date();
     let entryZone: HTMLTextAreaElement;
@@ -18,7 +22,6 @@
     let calenderVisible: boolean = false;
 
     let monthHasEntry: boolean[];
-    let weekHasEntries: boolean[] = Array.from({ length: 7 }, () => false);
     let haveEntryForCurrent = false;
     let currentEntry = "";
     let showEditor = false;
@@ -32,7 +35,6 @@
         await Login.UpdateSignInStatus();
         await ReadJournalEntriesForMonth();
         await GetActiveEntry();
-        await GetEntriesForWeek();
         await GetStreak();
 
         Query.StartTickingSync();
@@ -54,21 +56,6 @@
         currentEntry = entry.textContent;
         haveEntryForCurrent = !StringIsNullOrWhiteSpace(entry.textContent);
         console.log(entry.textContent);
-    }
-
-    async function GetEntriesForWeek() {
-        let walk = activeDate;
-        for (let i = 6; i >= 0; i--) {
-            const entry = await Query.GlobalDataStore.AccessEntry(walk);
-            weekHasEntries[i] = !StringIsNullOrWhiteSpace(entry.textContent);
-            walk = GetDateDayBefore(walk);
-        }
-    }
-
-    function GetDateDayBefore(date: Date) {
-        let dayBefore = new Date(date.getTime());
-        dayBefore.setDate(date.getDate() - 1);
-        return dayBefore;
     }
 
     function StringIsNullOrWhiteSpace(s: string | null) {
@@ -193,11 +180,6 @@
     <column>
         <!-- <GuestToUserConversionForm></GuestToUserConversionForm> -->
         <expand_row class="head">
-            <!-- <WeekView
-                on:dateselected={HandleDateSelect}
-                hasEntry={weekHasEntries}
-                selectedDate={activeDate}
-            ></WeekView> -->
             <row_fixed style="gap: 20px;">
                 <MenuItem title="Streak">
                     <lord-icon
@@ -258,34 +240,19 @@
             <textarea style="pointer-events:none;">{currentEntry}</textarea>
         {:else if !showEditor}
             {#if DateIsPast(activeDate)}
-                <lord-icon
-                    src="https://cdn.lordicon.com/uhstaxbs.json"
-                    trigger="hover"
-                    style="width:250px;height:250px"
-                >
-                </lord-icon>
+                <Lottie src="https://cdn.lordicon.com/uhstaxbs.json"></Lottie>
                 <p>
                     Wow, we're in the past! You didn't write a journal entry on
                     this day.
                 </p>
             {:else if DateIsFuture(activeDate)}
-                <lord-icon
-                    src="https://cdn.lordicon.com/pcxpjqjz.json"
-                    trigger="hover"
-                    style="width:250px;height:250px"
-                >
-                </lord-icon>
+                <Lottie src="https://cdn.lordicon.com/pcxpjqjz.json"></Lottie>
                 <p>
                     Neato, it's the future! You better write a journal entry
                     when this date comes around!
                 </p>
             {:else}
-                <lord-icon
-                    src="https://cdn.lordicon.com/rnqhxxtn.json"
-                    trigger="hover"
-                    style="width:250px;height:250px"
-                >
-                </lord-icon>
+                <Lottie src="https://cdn.lordicon.com/lzgqzxrq.json"></Lottie>
                 <p>No entry for today!</p>
                 <button on:click={() => (showEditor = true)}
                     >Create Entry</button
