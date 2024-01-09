@@ -40,4 +40,13 @@
         height: 100%;
         text-align: center;
     }
+    
+    @media only screen and (max-width: 700px) {
+        modal{
+            width: 100%;
+            height: auto;
+            border-radius: 0;
+        }
+
+    }
 </style>

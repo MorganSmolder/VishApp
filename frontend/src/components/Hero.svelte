@@ -8,17 +8,18 @@
     function NotifyStart() {
         dispatch("start", {});
     }
-
 </script>
 
 <hero>
     <container>
         <row>
-            <Meditate ></Meditate>
+            <Meditate></Meditate>
             <column class="left">
                 <heading> MindSpace </heading>
                 <p>A streak-driven journalling experience</p>
-                <button class="jumbo_button" on:click={NotifyStart}>Get Started</button>
+                <button class="jumbo_button" on:click={NotifyStart}
+                    >Get Started</button
+                >
             </column>
         </row>
     </container>
@@ -45,7 +46,6 @@
 
         font-size: 64px;
         text-align: center;
-
     }
 
     p {
@@ -59,5 +59,24 @@
 
     button:hover {
         background-color: #ff3f8f;
+    }
+
+    @media only screen and (max-width: 1000px) {
+        heading {
+            font-size: 48px;
+        }
+
+        lord-icon {
+            /* width: 200px;
+            height: 200px; */
+        }
+
+        .left {
+            min-width: 0px;
+        }
+
+        p{
+            font-size: 24px;
+        }
     }
 </style>

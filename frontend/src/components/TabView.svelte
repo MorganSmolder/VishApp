@@ -31,11 +31,11 @@
     onMount(async () => {});
 </script>
 
-    <row>
+    <row_fixed>
         <button class="tab {activeTab == 0 ? "selected_tab" : ""}"  on:click={TabA}>{headerA}</button>
         <button class="tab {activeTab == 1 ? "selected_tab" : ""}" on:click={TabB}>{headerB}</button>
         <button class="tab {activeTab == 2 ? "selected_tab" : ""}" on:click={TabC}>{headerC}</button>
-    </row>
+    </row_fixed>
     <div class="tab_content">
         {#if activeTab == 0}
             <slot name="body_a" />

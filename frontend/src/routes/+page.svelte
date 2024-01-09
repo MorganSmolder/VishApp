@@ -15,7 +15,7 @@
         signInActive = false;
         if(loggedIn)
         {
-            goto("/journal");
+            window.location.href = "/journal";
         }
     }
 </script>
@@ -79,8 +79,8 @@
         }
 
         lord-icon{
-            width: 200px;
-            height: 200px;
+            /* width: 200px;
+            height: 200px; */
         }
     }
 </style>

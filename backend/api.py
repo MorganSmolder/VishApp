@@ -1,6 +1,7 @@
 from flask import Flask, session, jsonify
 from flask import request
 import json
+import time
 
 from database import JournalEntry, User
 

@@ -12,10 +12,6 @@
     import AccountManagement from "../../components/AccountManagement.svelte";
     import Lottie from "../../components/Lottie.svelte";
 
-    import Dino from "$lib/lottie/dino.json";
-    import Ufo from "$lib/lottie/ufo.json";
-    import Clock from "$lib/lottie/clock.json";
-
     let activeDate = new Date();
     let entryZone: HTMLTextAreaElement;
 
@@ -228,7 +224,7 @@
                 <!-- <StreakCounter></StreakCounter> -->
             </row_fixed>
         </expand_row>
-        <row style="margin: 20px; width:100%; gap:20px; align-items:baseline;">
+        <row style="margin: 20px; width:100%; gap:20px;">
             <column>
                 <h1>{FormatDate(activeDate)}</h1>
                 <h3 style="margin: 0;">
@@ -303,8 +299,8 @@
     }
 
     textarea {
-        width: 100%;
-        margin: 2rem;
+        width: 80%;
+        margin: 20px;
         margin-top: 0;
         min-height: 400px;
         border: none;
@@ -335,5 +331,9 @@
     column {
         height: 100%;
         row-gap: 10px;
+    }
+
+    p{
+        text-align: center;
     }
 </style>
